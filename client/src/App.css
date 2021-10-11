@@ -13,6 +13,33 @@
   color: white;
 }
 
-.App-link {
-  color: #61dafb;
+.login {
+  margin-top: 5%;
+  border-style: solid;
+  border-color: green;
+  width: 30%;
+  margin-left: 35%;  
+}
+
+.inputtext {
+  margin-left: 5%;
+  text-align: left;
+}
+
+.text {
+  width: 80%;
+}
+
+.button {
+  width: 20%;
+  margin-right: 5%;  
+  margin-bottom: 5%;
+}
+
+.head {
+  border-bottom: solid;
+  border-color: green;
+  background-color: green;
+  margin-top: -4.9%;
+  color: white;
 }
