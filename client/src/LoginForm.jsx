@@ -22,11 +22,12 @@ class LoginForm extends Component {
 
   startStream(data) {
     //stream = new EventSource(this.state.chatUrl + "/stream/" + sessionStorage.accessToken    );
-    console.log(data)
+    console.log(data.message_token)
   }
 
   login = (event) => {
     //alert(JSON.stringify(this.state))
+    event.preventDefault();
     const requestOptions = {
         method: 'POST',
         headers: { 
@@ -36,14 +37,11 @@ class LoginForm extends Component {
         },
         body: JSON.stringify({ username: this.state.username, password: this.state.password })
     };
-    
+
     fetch(this.state.chatUrl + '/login', requestOptions)
-      .then((response) => {       
-        this.startStream(response.data)     
-      })/*.then((data) => {
-        this.startStream(data)
-      });*/
-    event.preventDefault();
+            .then(response => response.json())
+            .then(data => this.startStream(data));
+    
   }
 
 

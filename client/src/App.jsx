@@ -1,5 +1,6 @@
 import { Component } from "react";
 import LoginForm from './LoginForm'
+import Chatpage from './Chatpage'
 import "./App.css";
 
 class App extends Component {
@@ -24,6 +25,7 @@ class App extends Component {
     return (
       <div className="App">
         <LoginForm/>
+        <Chatpage/>
       </div>
     );
   }
