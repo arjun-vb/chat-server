@@ -1,15 +1,21 @@
 import { Component } from "react";
-import "./App.css";
+import React from 'react';
+import Stream from './Stream'
+import Users from './Users'
+import Message from './Message'
+import "./chat.css";
 
 class Chatpage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-
-    }
-    
+   
+    this.appendData = this.appendData.bind(this);
+    this.streamRef = React.createRef();
   }
 
+  appendData(data) {
+    this.streamRef.current.appendData(data);
+  }
 
   render() {
     return (
@@ -18,11 +24,12 @@ class Chatpage extends Component {
           <h1>Chat Stream</h1>
         </div>
         <div>
-          <div class='stream'>Stream</div>
-          <div class='user'>online users</div>
+          <div class='stream'><Stream ref={this.streamRef}/></div>
+          <div class='users'><Users/></div>
         </div>
         <div>
-          <input type="text"/>
+          <div class='message'><Message appendData={this.appendData}/></div>
+          <div class='placeholder'></div>
         </div>
       </div>
     );

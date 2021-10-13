@@ -1,4 +1,6 @@
 import { Component } from "react";
+//import App from './App'
+import Chatpage from './Chatpage'
 import "./App.css";
 
 class LoginForm extends Component {
@@ -7,7 +9,8 @@ class LoginForm extends Component {
     this.state = {
       chatUrl:"http://localhost:3001",
       username: "",
-      password: ""
+      password: "",
+      isVisible: true
     }
     
   }
@@ -20,10 +23,18 @@ class LoginForm extends Component {
     this.setState({username: "", chatUrl: "", password: ""})
   }
 
-  startStream(data) {
+  handleLogin(data) {
     //stream = new EventSource(this.state.chatUrl + "/stream/" + sessionStorage.accessToken    );
-    console.log(data.message_token)
+    //Chatpage.setState({message_token: data.message_token, stream_token: data.stream_token});
+    this.setState({isVisible: false})
+    this.props.handleLogin(data.message_token, data.stream_token)
+
   }
+
+  /*getBoxClassName() {
+    this.setState({isVisible ? "login" : "hidden"}
+  }*/
+
 
   login = (event) => {
     //alert(JSON.stringify(this.state))
@@ -40,14 +51,14 @@ class LoginForm extends Component {
 
     fetch(this.state.chatUrl + '/login', requestOptions)
             .then(response => response.json())
-            .then(data => this.startStream(data));
+            .then(data => this.handleLogin(data));
     
   }
 
 
   render() {
     return (
-      <form class="login">
+      <form class={this.state.isVisible ? "login" : "hide"} id="login">
         <div class="head">
           <h2>Login</h2>
         </div><br/>

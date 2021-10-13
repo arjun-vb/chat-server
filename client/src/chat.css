@@ -1,0 +1,36 @@
+.hide {
+  display: none;
+}
+
+.stream {
+  width:  80%;
+  border: solid;
+  float:  left;
+  margin-left: 3%;
+  overflow: scroll;
+}
+
+.users {
+  width:  10%;
+  border: solid;
+  float:  left;
+  margin-left: 3%;
+}
+
+.message {
+  width: 80%;
+  margin-left: 3%;
+  float:  left;
+  position: absolute;
+  bottom: 0;
+  margin-bottom: 5%;
+}
+
+.placeholder {
+  width:  10%;
+}
+
+.msgtxt {
+  width: 99%;
+  border: solid;
+}

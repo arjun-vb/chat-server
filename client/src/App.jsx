@@ -5,9 +5,20 @@ import "./App.css";
 
 class App extends Component {
   constructor(props) {
-    super(props);
+    super(props);    
+    this.state = {
+      message_token: "",
+      stream_token: ""
+    }
+    this.handleLogin = this.handleLogin.bind(this)
+  }
 
-    const server = new EventSource("http://localhost:3001/stream/a");
+  handleLogin(msgToken, streamToken) {
+    
+    this.setState({message_token: msgToken, stream_token: streamToken})
+    console.log("Chatpage" +msgToken)
+    const server = new EventSource("http://localhost:3001/stream/" + streamToken);
+    
     server.addEventListener("message", (event) => {
       if (event.data === "Goodbye!") {
         console.log("Closing SSE connection");
@@ -16,15 +27,17 @@ class App extends Component {
         console.log(event.data);
       }
     });
-    server.onerror = (_event) => {
+    
+    server.onerror = (event) => {
       console.log("Connection lost, reestablishing");
     };
   }
 
+  //<LoginForm handleLogin={this.handleLogin}/>
   render() {
     return (
       <div className="App">
-        <LoginForm/>
+        
         <Chatpage/>
       </div>
     );
