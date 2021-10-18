@@ -1,4 +1,5 @@
 import { Component } from "react";
+import React from 'react';
 import LoginForm from './LoginForm'
 import Chatpage from './Chatpage'
 import "./App.css";
@@ -10,35 +11,20 @@ class App extends Component {
       message_token: "",
       stream_token: ""
     }
+    this.chatRef = React.createRef();
     this.handleLogin = this.handleLogin.bind(this)
   }
 
-  handleLogin(msgToken, streamToken) {
-    
-    this.setState({message_token: msgToken, stream_token: streamToken})
-    console.log("Chatpage" +msgToken)
-    const server = new EventSource("http://localhost:3001/stream/" + streamToken);
-    
-    server.addEventListener("message", (event) => {
-      if (event.data === "Goodbye!") {
-        console.log("Closing SSE connection");
-        server.close();
-      } else {
-        console.log(event.data);
-      }
-    });
-    
-    server.onerror = (event) => {
-      console.log("Connection lost, reestablishing");
-    };
+  handleLogin(msgToken, streamToken, chatUrl) {
+    this.chatRef.current.handleLogin(msgToken, streamToken, chatUrl);
   }
 
   //<LoginForm handleLogin={this.handleLogin}/>
   render() {
     return (
       <div className="App">
-        
-        <Chatpage/>
+        <LoginForm handleLogin={this.handleLogin}/>
+        <Chatpage ref={this.chatRef}/>
       </div>
     );
   }

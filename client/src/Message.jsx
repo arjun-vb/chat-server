@@ -1,5 +1,4 @@
 import { Component } from "react";
-import Stream from './Stream'
 import "./chat.css";
 
 class Message extends Component {
@@ -19,6 +18,7 @@ class Message extends Component {
     if (event.key === 'Enter') { 
       event.preventDefault();
       this.props.appendData(this.state.message)
+      this.setState({message: ""})
     }
   }
 

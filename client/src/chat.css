@@ -8,6 +8,10 @@
   float:  left;
   margin-left: 3%;
   overflow: scroll;
+  height: 500px;
+  display: flex;
+  flex-direction: column-reverse;
+  text-align: left;
 }
 
 .users {
@@ -15,13 +19,14 @@
   border: solid;
   float:  left;
   margin-left: 3%;
+  border-radius: 10px;
 }
 
 .message {
-  width: 80%;
+  margin-top: 2%;
+  width: 80.5%;
   margin-left: 3%;
   float:  left;
-  position: absolute;
   bottom: 0;
   margin-bottom: 5%;
 }
@@ -33,4 +38,10 @@
 .msgtxt {
   width: 99%;
   border: solid;
+  height: 30px;
+  border-radius: 10px;
+}
+
+.onlineuser {
+  border-bottom: solid ;
 }

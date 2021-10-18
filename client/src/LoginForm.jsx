@@ -1,6 +1,4 @@
 import { Component } from "react";
-//import App from './App'
-import Chatpage from './Chatpage'
 import "./App.css";
 
 class LoginForm extends Component {
@@ -27,25 +25,26 @@ class LoginForm extends Component {
     //stream = new EventSource(this.state.chatUrl + "/stream/" + sessionStorage.accessToken    );
     //Chatpage.setState({message_token: data.message_token, stream_token: data.stream_token});
     this.setState({isVisible: false})
-    this.props.handleLogin(data.message_token, data.stream_token)
+    this.props.handleLogin(data.message_token, data.stream_token, this.state.chatUrl)
 
   }
-
-  /*getBoxClassName() {
-    this.setState({isVisible ? "login" : "hidden"}
-  }*/
 
 
   login = (event) => {
     //alert(JSON.stringify(this.state))
+    /*const formData = new FormData();
+    formData.append('username', this.state.username);
+    formData.append('password', this.state.password);*/
+
     event.preventDefault();
     const requestOptions = {
         method: 'POST',
         headers: { 
-          'Content-Type': 'application/json',
+          'Content-Type': 'multipart/form-data',
           'Access-Control-Allow-Origin': '*'
 
         },
+        //body: formData
         body: JSON.stringify({ username: this.state.username, password: this.state.password })
     };
 

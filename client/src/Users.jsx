@@ -6,21 +6,26 @@ class Users extends Component {
     super(props);
     this.state = {
 
-    }
-    this.displayUsers = []
-    
+    }    
   }
 
-  appendData(message) {
-    this.displayUsers.push(<div>message</div>)
+  addUser(username) {    
+    var newdiv = document.createElement('div');
+    newdiv.innerHTML = username;
+    newdiv.setAttribute("id", username);
+    document.getElementById('userlist').appendChild(newdiv);
+  }
+  
+  removeUser(username) {
+    var user = document.getElementById(username);
+    user.remove();
   }
 
   render() {
     return (
       <div>
-      	Online Users
-        <div>
-          {this.displayUsers}
+      	<div class='onlineuser'>Online Users</div>
+        <div id='userlist'>
         </div>
       </div>
     );
