@@ -17,7 +17,7 @@ class Message extends Component {
   entermessage = (event) => {
     if (event.key === 'Enter') { 
       event.preventDefault();
-      this.props.appendData(this.state.message)
+      this.props.streamMessage(this.state.message)
       this.setState({message: ""})
     }
   }

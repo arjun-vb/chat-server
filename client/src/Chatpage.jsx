@@ -22,7 +22,37 @@ class Chatpage extends Component {
   }
 
   streamMessage(data) {
+
     var auth = "Bearer " + this.state.message_token;
+    console.log("message token " + this.state.message_token);
+    var request = new XMLHttpRequest();
+    var form = new FormData();
+    form.append("message", data);
+
+    request.open("POST", this.state.chatUrl + '/message');
+    request.setRequestHeader('Authorization', auth);
+
+    request.addEventListener("readystatechange", () => {
+      if (request.readyState !== 4) return;
+      if (request.status === 201) {
+        if (request.getAllResponseHeaders().indexOf("Token") >= 0) {
+          var data = request.getResponseHeader("Token");
+          console.log(data);
+          this.updateMessageToken(data);
+        }
+      } else if (request.status === 403) {
+          alert("Invalid message token");
+      } else if (request.status === 409) {
+          alert("User not logged in");
+
+      } else {
+          alert(request.status + " failure to /message");
+      }
+
+    });
+    
+    request.send(form);
+    /*var auth = "Bearer " + this.state.message_token;
     const requestOptions = {
         method: 'POST',
         headers: { 
@@ -32,14 +62,14 @@ class Chatpage extends Component {
 
         },
         body: JSON.stringify({ message: data})
-    };
+    };*/
 
-    fetch(this.state.chatUrl + '/message', requestOptions)
+    /*fetch(this.state.chatUrl + '/message', requestOptions)
             .then(response => response.json())
-            .then(data => this.updateMessageToken(data));
+            .then(data => this.updateMessageToken(data));*/
 
-    this.appendData(data);
-    //this.userRef.current.addUser(data);
+    //console.log("messagePost")
+    //this.appendData(data);
   }
 
   appendData(data) {
@@ -47,7 +77,7 @@ class Chatpage extends Component {
   }
 
   updateMessageToken(data) {
-    this.setState({message_token: data.Token})
+    this.setState({message_token: data})
   }
 
   /*{
@@ -68,11 +98,9 @@ class Chatpage extends Component {
       var data = JSON.parse(event.data);
       var fulldate = new Date(data.created * 1000);
       var timestamp = fulldate.toLocaleDateString('en-US') + " " +fulldate.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit', hour12: true })
-      var messages = data.message;
-      for(var i = 0; i < messages.length; i++) {
-        var entry = timestamp + " (" + data.user + ") " + messages[i];
-        this.appendData(entry);
-      }
+      //var messages = data.message;
+      var entry = timestamp + " (" + data.user + ") " + data.message;
+      this.appendData(entry);
 
     });
 
@@ -145,7 +173,7 @@ class Chatpage extends Component {
           <div class='users'><Users ref={this.userRef}/></div>
         </div>
         <div>
-          <div class='message'><Message appendData={this.streamMessage}/></div>
+          <div class='message'><Message streamMessage={this.streamMessage}/></div>
           <div class='placeholder'></div>
         </div>
       </div>

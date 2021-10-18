@@ -6,11 +6,7 @@ import "./App.css";
 
 class App extends Component {
   constructor(props) {
-    super(props);    
-    this.state = {
-      message_token: "",
-      stream_token: ""
-    }
+    super(props); 
     this.chatRef = React.createRef();
     this.handleLogin = this.handleLogin.bind(this)
   }

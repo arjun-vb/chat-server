@@ -10,6 +10,7 @@ class LoginForm extends Component {
       password: "",
       isVisible: true
     }
+    this.handleLogin = this.handleLogin.bind(this)
     
   }
 
@@ -31,10 +32,37 @@ class LoginForm extends Component {
 
 
   login = (event) => {
-    //alert(JSON.stringify(this.state))
-    /*const formData = new FormData();
+
+    var request = new XMLHttpRequest();
+    var form = new FormData();
+    form.append("password", this.state.password);
+    form.append("username", this.state.username);
+
+    request.open("POST", this.state.chatUrl + '/login');
+
+    request.addEventListener("readystatechange", () => {
+      if (request.readyState !== 4) return;
+      if (request.status === 201) {
+          const data = JSON.parse(request.responseText);
+          console.log(data);
+          this.handleLogin(data);
+      } else if (request.status === 403) {
+          alert("Invalid username or password");
+      } else if (request.status === 409) {
+          alert(this.state.username+ " is already logged in");
+
+      } else {
+          alert(request.status + " failure to /login");
+      }
+
+    });
+    
+    request.send(form);
+    event.preventDefault();
+
+   /* var formData = new FormData();
     formData.append('username', this.state.username);
-    formData.append('password', this.state.password);*/
+    formData.append('password', this.state.password);
 
     event.preventDefault();
     const requestOptions = {
@@ -44,13 +72,13 @@ class LoginForm extends Component {
           'Access-Control-Allow-Origin': '*'
 
         },
-        //body: formData
-        body: JSON.stringify({ username: this.state.username, password: this.state.password })
+        body: formData
+        //body: JSON.stringify({ username: this.state.username, password: this.state.password })
     };
 
     fetch(this.state.chatUrl + '/login', requestOptions)
             .then(response => response.json())
-            .then(data => this.handleLogin(data));
+            .then(data => this.handleLogin(data));*/
     
   }
 
