@@ -24,7 +24,6 @@ class Chatpage extends Component {
   streamMessage(data) {
 
     var auth = "Bearer " + this.state.message_token;
-    console.log("message token " + this.state.message_token);
     var request = new XMLHttpRequest();
     var form = new FormData();
     form.append("message", data);
@@ -33,11 +32,10 @@ class Chatpage extends Component {
     request.setRequestHeader('Authorization', auth);
 
     request.addEventListener("readystatechange", () => {
-      if (request.readyState !== 4) return;
+      if (request.readyState !== 4 ) return;
       if (request.status === 201) {
-        if (request.getAllResponseHeaders().indexOf("Token") >= 0) {
-          var data = request.getResponseHeader("Token");
-          console.log(data);
+        if (request.getAllResponseHeaders().indexOf("token") >= 0) {
+          var data = request.getResponseHeader("token");
           this.updateMessageToken(data);
         }
       } else if (request.status === 403) {
@@ -48,28 +46,11 @@ class Chatpage extends Component {
       } else {
           alert(request.status + " failure to /message");
       }
+      
 
     });
     
     request.send(form);
-    /*var auth = "Bearer " + this.state.message_token;
-    const requestOptions = {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Access-Control-Allow-Origin': '*',
-          'Authorization': auth
-
-        },
-        body: JSON.stringify({ message: data})
-    };*/
-
-    /*fetch(this.state.chatUrl + '/message', requestOptions)
-            .then(response => response.json())
-            .then(data => this.updateMessageToken(data));*/
-
-    //console.log("messagePost")
-    //this.appendData(data);
   }
 
   appendData(data) {
@@ -77,21 +58,14 @@ class Chatpage extends Component {
   }
 
   updateMessageToken(data) {
-    this.setState({message_token: data})
+    this.setState({message_token: data});
   }
 
-  /*{
-      headers :{
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Allow-Origin': '*'
-
-      }*/
-
   handleLogin(msgToken, streamToken, chatUrl) {
+    
     this.setState({message_token: msgToken, stream_token: streamToken, chatUrl: chatUrl, isVisible: true})
-    //console.log("Chatpage" +msgToken)
-    const server = new EventSource("http://localhost:3001/stream/" + streamToken);
+
+    const server = new EventSource(this.state.chatUrl + "/stream/" + streamToken);
     
     server.addEventListener("Message", (event) => {
       //var entry = event.lastEventId + " " +event.data + " "
@@ -127,6 +101,7 @@ class Chatpage extends Component {
     server.addEventListener("Disconnect", (event) => {
       this.setState({isVisible: false});
       server.close();
+      this.props.loginRedirect();
     });
     
     server.addEventListener("Part", (event) => {
@@ -149,8 +124,15 @@ class Chatpage extends Component {
       this.appendData(status);
     });
 
+    server.onopen = (event) => {
+      document.getElementById('postmessage').disabled = false;
+      document.getElementById('postmessage').value = ""
+    };
+
     server.onerror = (event) => {
-      console.log("Connection lost, reestablishing");
+      document.getElementById('postmessage').disabled = true;
+      document.getElementById('postmessage').value = "Reconnect to send messages.."
+      //console.log("Connection lost, reestablishing");
     };
   }
 

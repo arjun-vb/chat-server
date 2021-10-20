@@ -6,6 +6,7 @@ class LoginForm extends Component {
     super(props);
     this.state = {
       chatUrl:"http://localhost:3001",
+      //chatUrl: "",
       username: "",
       password: "",
       isVisible: true
@@ -30,6 +31,10 @@ class LoginForm extends Component {
 
   }
 
+  showLogin() {
+    this.setState({isVisible: true})
+  }
+
 
   login = (event) => {
 
@@ -44,7 +49,7 @@ class LoginForm extends Component {
       if (request.readyState !== 4) return;
       if (request.status === 201) {
           const data = JSON.parse(request.responseText);
-          console.log(data);
+
           this.handleLogin(data);
       } else if (request.status === 403) {
           alert("Invalid username or password");
@@ -85,7 +90,7 @@ class LoginForm extends Component {
 
   render() {
     return (
-      <form class={this.state.isVisible ? "login" : "hide"} id="login">
+      <form className={this.state.isVisible ? "login" : "hide"} id="login">
         <div class="head">
           <h2>Login</h2>
         </div><br/>

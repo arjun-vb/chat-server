@@ -27,7 +27,7 @@ class Message extends Component {
     return (
       <div>
           <input type="text" value={this.state.message} onChange={this.updateInput} 
-          onKeyPress={this.entermessage} class='msgtxt' name="message"/>
+          onKeyPress={this.entermessage} class='msgtxt' name="message" id="postmessage"/>
       </div>
     );
   }

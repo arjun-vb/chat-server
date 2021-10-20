@@ -2,18 +2,15 @@ import { Component } from "react";
 import "./App.css";
 
 class Users extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
+  
+  addUser(username) {
+    if (!document.contains(document.getElementById(username))) {
+      var newdiv = document.createElement('div');
+      newdiv.innerHTML = username;
+      newdiv.setAttribute("id", username);
+      document.getElementById('userlist').appendChild(newdiv);
+    }
 
-    }    
-  }
-
-  addUser(username) {    
-    var newdiv = document.createElement('div');
-    newdiv.innerHTML = username;
-    newdiv.setAttribute("id", username);
-    document.getElementById('userlist').appendChild(newdiv);
   }
   
   removeUser(username) {
