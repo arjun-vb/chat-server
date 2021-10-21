@@ -8,12 +8,20 @@ require 'securerandom'
 require 'jwt'
 
 ENV['JWT_SECRET'] = "THISISASECRET"
-SCHEDULE_TIME = 60
+SCHEDULE_TIME = 600
 connections = []
 registered_users = Hash.new
 online_users = []
 message100_list = []
 user_connection= Hash.new
+
+random = SecureRandom.alphanumeric(10)
+eventdata = {'status': 'Server is up', 'created':Time.now.to_f}.to_json
+while message100_list.length >= 100
+  message100_list.shift
+end
+data = ["ServerStatus", eventdata, random]
+message100_list << data;
 
 
 EventMachine.schedule do
@@ -118,50 +126,64 @@ get '/stream/:token', provides: 'text/event-stream' do
           connection << "data: #{arr[1]}\n"
           connection << "id: #{arr[2]}\n\n"
         end
+
+        eventdata = {'users': online_users, 'created':Time.now.to_f}.to_json
+
+        connection << "event: Users\n"
+        connection << "data: #{eventdata}\n"
+        connection << "id: #{SecureRandom.alphanumeric(10)}\n\n"  
       end
     else
-      eventdata = {'status': 'Server is up', 'created':Time.now.to_f}.to_json
-
-      connection << "event: ServerStatus\n"
-      connection << "data: #{eventdata}\n"
-      connection << "id: #{SecureRandom.alphanumeric(10)}\n\n"
 
       for arr in message100_list do
-        #puts arr[2];
-        connection << "event: #{arr[0]}\n"
-        connection << "data: #{arr[1]}\n"
-        connection << "id: #{arr[2]}\n\n"
+        if arr[0] != 'Join' and arr[0] != 'Part'
+          connection << "event: #{arr[0]}\n"
+          connection << "data: #{arr[1]}\n"
+          connection << "id: #{arr[2]}\n\n"
+        end
       end
-    end
 
-    eventdata = {'users': online_users, 'created':Time.now.to_f}.to_json
+      eventdata = {'users': online_users, 'created':Time.now.to_f}.to_json
 
-    connection << "event: Users\n"
-    connection << "data: #{eventdata}\n"
-    connection << "id: #{SecureRandom.alphanumeric(10)}\n\n"
-
-
-    connections.each do |connection|
-      eventdata = {'user': currUser, 'created':Time.now.to_f}.to_json
-
-      connection << "event: Join\n"
+      connection << "event: Users\n"
       connection << "data: #{eventdata}\n"
       connection << "id: #{SecureRandom.alphanumeric(10)}\n\n"
     end
 
+    random = SecureRandom.alphanumeric(10)
+    eventdata = {'user': currUser, 'created':Time.now.to_f}.to_json
+    while message100_list.length >= 100
+      message100_list.shift
+    end
+    data = ["Join", eventdata, random]
+    message100_list << data;
 
-    connection.callback do        
-      connections.each do |connection|
-        eventdata = {'user': currUser, 'created':Time.now.to_f}.to_json
+    connections.each do |connection|
+      connection << "event: Join\n"
+      connection << "data: #{eventdata}\n"
+      connection << "id: #{random}\n\n"
+    end
 
-        connection << "event: Part\n"
-        connection << "data: #{eventdata}\n"
-        connection << "id: #{SecureRandom.alphanumeric(10)}\n\n"
-      end
+
+    connection.callback do  
       online_users.delete(currUser)
       user_connection.delete(currUser)
-
       connections.delete(connection)
+
+      random = SecureRandom.alphanumeric(10)
+      eventdata = {'user': currUser, 'created':Time.now.to_f}.to_json
+      while message100_list.length >= 100
+        message100_list.shift
+      end
+      data = ["Part", eventdata, random]
+      message100_list << data;
+
+      connections.each do |connection| 
+        connection << "event: Part\n"
+        connection << "data: #{eventdata}\n"
+        connection << "id: #{random}\n\n"
+      end
+      
     end
   end
   
@@ -198,8 +220,6 @@ post '/login' do
       
       registered_users[uname] = userDetails;
 
-      #puts registered_users[uname];
-      #online_users << uname; 
       body ({"message_token": msgToken, "stream_token": streamToken}).to_json
       status 201
     elsif registered_users[uname] != nil and registered_users[uname][0] == password
@@ -215,8 +235,7 @@ post '/login' do
       userDetails = registered_users[uname];
       userDetails[1] = msgToken;
       userDetails[2] = streamToken;
-      #puts registered_users[uname];
-      #online_users << uname; 
+
       body ({"message_token": msgToken, "stream_token": streamToken}).to_json
       status 201
     elsif registered_users[uname] != nil and registered_users[uname][0] != password
@@ -229,10 +248,6 @@ post '/login' do
 end
 
 post '/message' do
-
-  #req = JSON.parse(request.body.read)
-  #message = req['message']
-  #num = req.keys.count
 
   message = params[:message]
 
@@ -279,7 +294,6 @@ post '/message' do
         return
       end
 
-      
       random = SecureRandom.alphanumeric(10)
       if message == '/quit'
         connection = user_connection[currUser]
@@ -314,9 +328,20 @@ post '/message' do
             connection << "data: #{eventdata}\n"
             connection << "id: #{random}\n\n"
           end
+
           connection = user_connection[msgarr[1]]
           connection.close;
+          
         else
+          msgPayload = {
+            data: {'user':currUser, 'message':random}
+          }
+          msgToken =  JWT.encode msgPayload, ENV['JWT_SECRET'], 'HS256'
+      
+          registered_users[currUser][1] = msgToken;
+
+          headers 'Token' => msgToken
+          headers 'Access-Control-Expose-Headers' => 'Token'  
           status 409
           return
         end

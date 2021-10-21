@@ -17,12 +17,12 @@ class Chatpage extends Component {
    
     this.appendData = this.appendData.bind(this);
     this.streamMessage = this.streamMessage.bind(this);
+    this.inputRef = React.createRef()
     this.streamRef = React.createRef();
     this.userRef = React.createRef();
   }
 
   streamMessage(data) {
-
     var auth = "Bearer " + this.state.message_token;
     var request = new XMLHttpRequest();
     var form = new FormData();
@@ -41,6 +41,9 @@ class Chatpage extends Component {
       } else if (request.status === 403) {
           alert("Invalid message token");
       } else if (request.status === 409) {
+        
+          var data1 = request.getResponseHeader("token");
+          this.updateMessageToken(data1);
           alert("User not logged in");
 
       } else {
@@ -68,11 +71,10 @@ class Chatpage extends Component {
     const server = new EventSource(this.state.chatUrl + "/stream/" + streamToken);
     
     server.addEventListener("Message", (event) => {
-      //var entry = event.lastEventId + " " +event.data + " "
       var data = JSON.parse(event.data);
       var fulldate = new Date(data.created * 1000);
       var timestamp = fulldate.toLocaleDateString('en-US') + " " +fulldate.toLocaleTimeString('en-US', {hour:'2-digit',minute:'2-digit', hour12: true })
-      //var messages = data.message;
+
       var entry = timestamp + " (" + data.user + ") " + data.message;
       this.appendData(entry);
 
@@ -125,14 +127,11 @@ class Chatpage extends Component {
     });
 
     server.onopen = (event) => {
-      document.getElementById('postmessage').disabled = false;
-      document.getElementById('postmessage').value = ""
+      this.inputRef.current.enableTextbox();
     };
 
     server.onerror = (event) => {
-      document.getElementById('postmessage').disabled = true;
-      document.getElementById('postmessage').value = "Reconnect to send messages.."
-      //console.log("Connection lost, reestablishing");
+      this.inputRef.current.disableTextbox();
     };
   }
 
@@ -142,6 +141,11 @@ class Chatpage extends Component {
 
   addUser(username) {
     this.userRef.current.addUser(username);
+  }
+
+  clearChatpage() {
+    this.streamRef.current.clearAllMessages();
+    this.userRef.current.clearAllUsers();
   }
 
   render() {
@@ -155,7 +159,7 @@ class Chatpage extends Component {
           <div class='users'><Users ref={this.userRef}/></div>
         </div>
         <div>
-          <div class='message'><Message streamMessage={this.streamMessage}/></div>
+          <div class='message'><Message streamMessage={this.streamMessage} ref={this.inputRef}/></div>
           <div class='placeholder'></div>
         </div>
       </div>

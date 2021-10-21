@@ -5,7 +5,8 @@ class Message extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      message: ""
+      message: "",
+      disable: true
     }
     
   }
@@ -22,12 +23,19 @@ class Message extends Component {
     }
   }
 
+  enableTextbox() {
+    this.setState({message: "", disable: false})
+  }
+  
+  disableTextbox() {
+    this.setState({message: "Reconnect to send messages...", disable: true})
+  }
 
   render() {
     return (
       <div>
-          <input type="text" value={this.state.message} onChange={this.updateInput} 
-          onKeyPress={this.entermessage} class='msgtxt' name="message" id="postmessage"/>
+          <input type="text" value={this.state.message} onChange={this.updateInput} disabled={this.state.disable} 
+          onKeyPress={this.entermessage} class='msgtxt' name="message" id="postmessage" autoFocus/>
       </div>
     );
   }

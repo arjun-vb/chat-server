@@ -19,12 +19,10 @@ class App extends Component {
   }
   
   loginRedirect() {
-    document.getElementById('eventstream').innerHTML = '';
-    document.getElementById('userlist').innerHTML = '';
+    this.chatRef.current.clearChatpage();
     this.loginRef.current.showLogin();
   }
 
-  //<LoginForm handleLogin={this.handleLogin}/>
   render() {
     return (
       <div className="App">

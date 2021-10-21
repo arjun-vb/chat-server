@@ -20,12 +20,10 @@ class LoginForm extends Component {
   }
 
   clear = () => {
-    this.setState({username: "", chatUrl: "", password: ""})
+    this.setState({username: "", chatUrl: "http://localhost:3001", password: ""})
   }
 
   handleLogin(data) {
-    //stream = new EventSource(this.state.chatUrl + "/stream/" + sessionStorage.accessToken    );
-    //Chatpage.setState({message_token: data.message_token, stream_token: data.stream_token});
     this.setState({isVisible: false})
     this.props.handleLogin(data.message_token, data.stream_token, this.state.chatUrl)
 
@@ -33,6 +31,7 @@ class LoginForm extends Component {
 
   showLogin() {
     this.setState({isVisible: true})
+    this.clear();
   }
 
 
@@ -64,26 +63,6 @@ class LoginForm extends Component {
     
     request.send(form);
     event.preventDefault();
-
-   /* var formData = new FormData();
-    formData.append('username', this.state.username);
-    formData.append('password', this.state.password);
-
-    event.preventDefault();
-    const requestOptions = {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'multipart/form-data',
-          'Access-Control-Allow-Origin': '*'
-
-        },
-        body: formData
-        //body: JSON.stringify({ username: this.state.username, password: this.state.password })
-    };
-
-    fetch(this.state.chatUrl + '/login', requestOptions)
-            .then(response => response.json())
-            .then(data => this.handleLogin(data));*/
     
   }
 
@@ -96,7 +75,7 @@ class LoginForm extends Component {
         </div><br/>
         <div class="inputtext">          
           <label for="chatUrl">Chat URL: </label><br/>
-          <input type="text" class="text" onChange={this.updateInput} value={this.state.chatUrl} name="chatUrl"/>  <br/>
+          <input type="text" class="text" onChange={this.updateInput} value={this.state.chatUrl} name="chatUrl" autoFocus/>  <br/>
         </div><br/>
 
         <div class="inputtext">
