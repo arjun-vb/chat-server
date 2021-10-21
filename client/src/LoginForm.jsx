@@ -5,7 +5,7 @@ class LoginForm extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      chatUrl:"http://localhost:3001",
+      chatUrl:"",
       //chatUrl: "",
       username: "",
       password: "",
@@ -20,7 +20,7 @@ class LoginForm extends Component {
   }
 
   clear = () => {
-    this.setState({username: "", chatUrl: "http://localhost:3001", password: ""})
+    this.setState({username: "", chatUrl: "", password: ""})
   }
 
   handleLogin(data) {
